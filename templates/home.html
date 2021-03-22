@@ -1,0 +1,43 @@
+<!--layout template here act as a parent-->
+{% extends "layout.html" %}
+
+<!--anything inside block-content and endblock-content will-->
+<!--override the content of the layout.html template-->
+
+{% block content %}
+    {% for post in posts.items %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+          <div class="media-body">
+
+<!--              these bootstrap classes will wrap every post in the-->
+<!--              nice style-->
+            <div class="article-metadata">
+<!--                this will show the username of the author above the post-->
+              <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+<!--                this will display only date above post not hour minute and seconds-->
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+
+<!--    iterate through the pages-->
+<!--        left-edge and right-edge specify that how many of the link should be displayed -->
+<!--        on the side of active link.-->
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+<!--         create links to all the pages-->
+        {% if posts.page == page_num %}
+<!--            this link is for the active link, active link must look different from the other links.-->
+          <a class="btn btn-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
+{% endblock content %}
